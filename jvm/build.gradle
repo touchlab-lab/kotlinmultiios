@@ -1,0 +1,46 @@
+buildscript {
+    ext.kotlin_version = '1.2.40'
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+apply plugin: 'kotlin-platform-jvm'
+apply plugin: 'application'
+
+repositories {
+    mavenCentral()
+    maven { url 'https://dl.bintray.com/doppllib/j2objc' }
+    maven { url j2objcMavenDeploy }
+}
+
+dependencies {
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+    compile "co.doppl.lib:androidbase:0.9.0"
+//    compile "co.doppl.android.arch.persistence:db:1.0.0.123"
+    expectedBy project(":common")
+}
+
+applicationName = "KotlinCalculator"
+
+mainClassName = 'org.konan.calculator.JvmCliKt'
+run {
+    args "2 + 2"
+}
+
+task artifacts {
+    group = "Help"
+    description = "Displays the artifacts associated with each configuration of " + project
+    doFirst {
+        configurations.findAll().each { config ->
+            println "${config}:"
+            config.allArtifacts.getFiles().each { file -> println "" + file}
+            println ' '
+        }
+    }
+}

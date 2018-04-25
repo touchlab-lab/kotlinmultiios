@@ -1,0 +1,5 @@
+task build {
+    subprojects.each {
+        dependsOn("${it.path}:build")
+    }
+}
