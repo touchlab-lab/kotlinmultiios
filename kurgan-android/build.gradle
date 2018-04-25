@@ -12,7 +12,6 @@ buildscript {
     }
 }
 
-//apply plugin: 'org.jetbrains.kotlin.platform.common'
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-platform-android'
 
