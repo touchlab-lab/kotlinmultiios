@@ -1,8 +1,14 @@
 package co.touchlab.kurgan.architecture.database.support
 
-class SimpleSQLiteQuery: SupportSQLiteQuery{
-    private var mQuery: String
-    private var mBindArgs: Array<Any?>?
+/**
+ * Creates an SQL query with the sql string and the bind arguments.
+ *
+ * @param query    The query string, can include bind arguments (.e.g ?).
+ * @param bindArgs The bind argument value that will replace the placeholders in the query.
+ */
+class SimpleSQLiteQuery(query: String, bindArgs: Array<Any?>? = null) : SupportSQLiteQuery{
+    private var mQuery: String = query
+    private var mBindArgs: Array<Any?>? = bindArgs
 
     companion object {
         /**
@@ -41,17 +47,6 @@ class SimpleSQLiteQuery: SupportSQLiteQuery{
         }
     }
 
-    /**
-     * Creates an SQL query with the sql string and the bind arguments.
-     *
-     * @param query    The query string, can include bind arguments (.e.g ?).
-     * @param bindArgs The bind argument value that will replace the placeholders in the query.
-     */
-    constructor(query: String, bindArgs: Array<Any?>? = null){
-        mQuery = query
-        mBindArgs = bindArgs
-    }
-
     override fun getSql(): String {
         return mQuery
     }
@@ -59,7 +54,4 @@ class SimpleSQLiteQuery: SupportSQLiteQuery{
     override fun bindTo(statement: SupportSQLiteProgram) {
         bind(statement, mBindArgs)
     }
-
-
-
 }

@@ -207,6 +207,7 @@ interface SupportSQLiteDatabase {
      *
      * @return True if the current thread is holding an active connection to the database.
      */
+    //REVIEW: Not sure we need this
     fun isDbLockedByCurrentThread(): Boolean
 
     /**
@@ -236,63 +237,22 @@ interface SupportSQLiteDatabase {
      */
     fun yieldIfContendedSafely(sleepAfterYieldDelay: Long): Boolean
 
-    /**
-     * Gets the database version.
-     *
-     * @return the database version
-     */
-    fun getVersion(): Int
+    val version:Int
 
     /**
-     * Sets the database version.
-     *
-     * @param version the new database version
+     * The maximum size the database may grow to.
+     * The maximum size cannot be set below the current size.
      */
-    fun setVersion(version: Int)
+    var maximumSize: Long
 
     /**
-     * Returns the maximum size the database may grow to.
+     * The database page size, in bytes.
      *
-     * @return the new maximum database size
-     */
-    fun getMaximumSize(): Long
-
-    /**
-     * Sets the maximum size the database will grow to. The maximum size cannot
-     * be set below the current size.
-     *
-     * @param numBytes the maximum database size, in bytes
-     * @return the new maximum database size
-     */
-    fun setMaximumSize(numBytes: Long): Long
-
-    /**
-     * Returns the current database page size, in bytes.
-     *
-     * @return the database page size, in bytes
-     */
-    fun getPageSize(): Long
-
-    /**
-     * Sets the database page size. The page size must be a power of two. This
+     * The page size must be a power of two. This
      * method does not work if any data has been written to the database file,
      * and must be called right after the database has been created.
-     *
-     * @param numBytes the database page size, in bytes
      */
-    fun setPageSize(numBytes: Long)
-
-    /**
-     * Runs the given query on the database. If you would like to have typed bind arguments,
-     * use [.query].
-     *
-     * @param query The SQL query that includes the query and can bind into a given compiled
-     * program.
-     * @return A [Cursor] object, which is positioned before the first entry. Note that
-     * [Cursor]s are not synchronized, see the documentation for more details.
-     * @see .query
-     */
-    fun query(query: String): Cursor
+    var pageSize: Long
 
     /**
      * Runs the given query on the database. If you would like to have bind arguments,
@@ -305,7 +265,7 @@ interface SupportSQLiteDatabase {
      * [Cursor]s are not synchronized, see the documentation for more details.
      * @see .query
      */
-    fun query(query: String, bindArgs: Array<Any?>?): Cursor
+    fun query(query: String, bindArgs: Array<Any?>? = null): Cursor
 
     /**
      * Runs the given query on the database.

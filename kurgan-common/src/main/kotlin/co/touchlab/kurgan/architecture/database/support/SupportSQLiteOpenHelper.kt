@@ -1,41 +1,16 @@
 package co.touchlab.kurgan.architecture.database.support
 
-import co.touchlab.kurgan.architecture.database.*
-import co.touchlab.kurgan.file.*
 import co.touchlab.kurgan.*
 import co.touchlab.kurgan.architecture.DataContext
 
-fun deleteDatabase(file:File?):Boolean {
-        if (file == null) {
-            throw IllegalArgumentException("file must not be null");
-        }
-
-        var deleted = false
-        /*deleted |=*/file.delete();
-        /*deleted |=*/File(file.getPath() + "-journal").delete();
-        /*deleted |=*/File(file.getPath() + "-shm").delete();
-        /*deleted |=*/File(file.getPath() + "-wal").delete();
-
-        val dir = file.getParentFile()
-        if (dir != null) {
-            val prefix = file.getName() + "-mj"
-            /*File[] files = dir.listFiles(new FileFilter() {
-                @Override
-                public boolean accept(File candidate) {
-                    return candidate.getName().startsWith(prefix);
-                }
-            });
-            if (files != null) {
-                for (File masterJournal : files) {
-                    *//*deleted |=*//*masterJournal.delete();
-                }
-            }*/
-        }
-        return deleted;
-    }
+expect fun deleteDatabase(path:String):Boolean
 
 interface SupportSQLiteOpenHelper {
-        /**
+    companion object {
+        val TAG:String = "SupportSQLite"
+    }
+
+    /**
      * Return the name of the SQLite database being opened, as given to
      * the constructor.
      */
@@ -102,10 +77,6 @@ interface SupportSQLiteOpenHelper {
      * {@link android.database.sqlite.SQLiteOpenHelper}.
      */
     abstract class Callback(val version: Int) {
-
-        companion object {
-            val TAG:String = "SupportSQLite"
-        }
 
         /**
          * Called when the database connection is being configured, to enable features such as
@@ -217,19 +188,18 @@ interface SupportSQLiteOpenHelper {
                 // make the application crash on database open operation. To avoid this problem,
                 // the application should provide its own {@link DatabaseErrorHandler} impl class
                 // to delete ALL files of the database (including the attached databases).
-                deleteDatabaseFile(db.getPath());
-                return;
+                deleteDatabaseFile(db.getPath())
+                return
             }
         }
 
         private fun deleteDatabaseFile(fileName:String) {
-            if (fileName.equals(":memory:", true)
-                    || fileName.trim().isEmpty()) {
+            if (fileName.isNullOrEmpty() || fileName.equals(":memory:", true)) {
                 return
             }
             Log.w(TAG, "deleting the database file: $fileName");
             try {
-                deleteDatabase(File(fileName))
+                deleteDatabase(fileName)
             } catch (e:Exception) {
             /* print warning and ignore exception */
                 Log.w(TAG, "delete failed: ", e)
@@ -240,72 +210,8 @@ interface SupportSQLiteOpenHelper {
     /**
      * The configuration to create an SQLite open helper object using {@link Factory}.
      */
-    class Configuration {
-        /**
-         * Context to use to open or create the database.
-         */
-        val context: DataContext
+    data class Configuration(val context: DataContext, val name: String?, val callback: Callback)
 
-        /**
-         * Name of the database file, or null for an in-memory database.
-         */
-        val name: String?
-        /**
-         * The callback class to handle creation, upgrade and downgrade.
-         */
-        val callback: Callback?
-
-        constructor(context: DataContext, name: String?, callback: Callback?) {
-            this.context = context
-            this.name = name
-            this.callback = callback
-        }
-
-        companion object {
-            fun builder(context:DataContext): Builder {
-                return Builder(context)
-            }
-        }
-
-        /**
-         * Builder class for {@link Configuration}.
-         */
-        class Builder {
-            var mContext:DataContext
-            var mName:String?=null
-            var mCallback: Callback?=null
-
-            fun build(): Configuration {
-                if (mCallback == null) {
-                    throw IllegalArgumentException("Must set a callback to create the"
-                            + " configuration.");
-                }
-                return Configuration(mContext, mName, mCallback)
-            }
-
-            constructor(context:DataContext) {
-                mContext = context
-            }
-
-            /**
-             * @param name Name of the database file, or null for an in-memory database.
-             * @return This
-             */
-            fun name(name:String?): Builder {
-                mName = name
-                return this
-            }
-
-            /**
-             * @param callback The callback class to handle creation, upgrade and downgrade.
-             * @return this
-             */
-            fun callback(callback: Callback): Builder {
-                mCallback = callback
-                return this
-            }
-        }
-    }
 
     /**
      * Factory class to create instances of {@link SupportSQLiteOpenHelper} using

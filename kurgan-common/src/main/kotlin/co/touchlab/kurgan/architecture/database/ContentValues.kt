@@ -4,6 +4,7 @@ class ContentValues{
 
  /** Holds the actual values */
     val mValues: HashMap<String, Any?>
+    val mLock: Any = Any()
 
     /**
      * Creates an empty set of values using the default initial size
@@ -61,6 +62,10 @@ class ContentValues{
      * @param value the data for the value to put
      */
     fun put(key:String, value:String) {
+        synchronized(mLock, {
+            val size = mValues.size
+            println("The size: $size")
+        })
         mValues.put(key, value)
     }
 
