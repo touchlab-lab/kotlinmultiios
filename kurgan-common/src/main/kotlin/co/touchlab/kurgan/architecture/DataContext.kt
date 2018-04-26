@@ -1,7 +1,5 @@
 package co.touchlab.kurgan.architecture
 
-import co.touchlab.kurgan.file.*
-
 interface DataContext{
     fun getSharedPreferences(name: String, mode: Int): SharedPreferences
     /**

@@ -12,6 +12,6 @@ class FrameworkSQLiteOpenHelperFactory : SupportSQLiteOpenHelper.Factory {
         println("Yeah, it wasn't that")
         return FrameworkSQLiteOpenHelper(nativeContext,
                 configuration.name,
-                configuration.callback!!)
+                configuration.callback)
     }
 }
