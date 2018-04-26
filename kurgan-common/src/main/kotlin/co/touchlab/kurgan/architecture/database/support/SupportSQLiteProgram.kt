@@ -34,7 +34,7 @@ interface SupportSQLiteProgram{
      * @param index The 1-based index to the parameter to bind
      * @param value The value to bind, must not be null
      */
-    fun bindString(index: Int, value: String?)
+    fun bindString(index: Int, value: String)
 
     /**
      * Bind a byte array value to this statement. The value remains bound until

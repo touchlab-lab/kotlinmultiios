@@ -1,22 +1,14 @@
 package co.touchlab.kurgan.architecture.database
 
 
-interface Cursor{
-    companion object {
+expect interface Cursor{
+    /*companion object {
         val FIELD_TYPE_NULL = 0
-
-        /** Value returned by [.getType] if the specified  column type is integer  */
-        val FIELD_TYPE_INTEGER = 1
-
-        /** Value returned by [.getType] if the specified column type is float  */
+   val FIELD_TYPE_INTEGER = 1
         val FIELD_TYPE_FLOAT = 2
-
-        /** Value returned by [.getType] if the specified column type is string  */
         val FIELD_TYPE_STRING = 3
-
-        /** Value returned by [.getType] if the specified column type is blob  */
         val FIELD_TYPE_BLOB = 4
-    }
+    }*/
 
     /**
      * Returns the numbers of rows in the cursor.
