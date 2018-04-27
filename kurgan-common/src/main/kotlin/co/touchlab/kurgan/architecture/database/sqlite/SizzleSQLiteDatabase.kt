@@ -1,9 +1,8 @@
 package co.touchlab.kurgan.architecture.database.sqlite
 
+import co.touchlab.kurgan.architecture.ContentValues
 import co.touchlab.kurgan.architecture.database.Cursor
-import co.touchlab.kurgan.architecture.database.sqlite.plain.ContentValues
-import co.touchlab.kurgan.architecture.database.sqlite.plain.SQLiteCursor
-import co.touchlab.kurgan.architecture.database.sqlite.plain.SQLiteDatabase
+import co.touchlab.kurgan.architecture.database.sqlite.plain.*
 import co.touchlab.kurgan.architecture.database.sqlite.plain.SQLiteTransactionListener
 import co.touchlab.kurgan.architecture.database.support.*
 
@@ -13,8 +12,8 @@ class SizzleSQLiteDatabase(private val mDelegate: SQLiteDatabase): SupportSQLite
     override fun compileStatement(sql: String): SupportSQLiteStatement = SizzleSQLiteStatement(mDelegate.compileStatement(sql))
     override fun beginTransaction() = mDelegate.beginTransaction()
     override fun beginTransactionNonExclusive() = mDelegate.beginTransactionNonExclusive()
-    override fun beginTransactionWithListener(transactionListener: SQLiteTransactionListener) = mDelegate.beginTransactionWithListener(transactionListener)
-    override fun beginTransactionWithListenerNonExclusive(transactionListener: SQLiteTransactionListener) = mDelegate.beginTransactionWithListenerNonExclusive(transactionListener)
+    override fun beginTransactionWithListener(transactionListener: co.touchlab.kurgan.architecture.database.support.SQLiteTransactionListener) = mDelegate.beginTransactionWithListener(SQLiteTransactionListenerWrapper(transactionListener))
+    override fun beginTransactionWithListenerNonExclusive(transactionListener: co.touchlab.kurgan.architecture.database.support.SQLiteTransactionListener) = mDelegate.beginTransactionWithListenerNonExclusive(SQLiteTransactionListenerWrapper(transactionListener))
     override fun endTransaction() = mDelegate.endTransaction()
     override fun setTransactionSuccessful() = mDelegate.setTransactionSuccessful()
     override fun inTransaction(): Boolean = mDelegate.inTransaction()
@@ -27,11 +26,16 @@ class SizzleSQLiteDatabase(private val mDelegate: SQLiteDatabase): SupportSQLite
 
     override fun query(query: String, bindArgs: Array<Any?>?): Cursor = query(SimpleSQLiteQuery(query, bindArgs))
     override fun query(supportQuery: SupportSQLiteQuery): Cursor {
-        val cursor = mDelegate.rawQueryWithFactory({ db, masterQuery, editTable, query ->
-            supportQuery.bindTo(FrameworkSQLiteProgram(query))
-            SQLiteCursor(masterQuery, editTable, query)
-        }, supportQuery.getSql(), arrayOfNulls<String>(0), null)
-        return cursor
+        return mDelegate.rawQueryWithFactory(
+                object : CursorFactory {
+                    override fun newCursor(db: SQLiteDatabase, masterQuery: SQLiteCursorDriver, editTable: String, query: SQLiteQuery): Cursor {
+                        supportQuery.bindTo(SizzleSQLiteProgram(query))
+                        return SQLiteCursor(masterQuery, editTable, query)
+                    }
+                },
+                supportQuery.getSql(),
+                arrayOfNulls(0),
+                null)
     }
 
     override fun insert(table: String, conflictAlgorithm: Int, values: ContentValues): Long =
@@ -62,4 +66,19 @@ class SizzleSQLiteDatabase(private val mDelegate: SQLiteDatabase): SupportSQLite
     override fun isWriteAheadLoggingEnabled(): Boolean = mDelegate.isWriteAheadLoggingEnabled()
     override fun isDatabaseIntegrityOk(): Boolean = mDelegate.isDatabaseIntegrityOk()
     override fun close() = mDelegate.close()
+}
+
+class SQLiteTransactionListenerWrapper(val listener: co.touchlab.kurgan.architecture.database.support.SQLiteTransactionListener):SQLiteTransactionListener{
+    override fun onBegin() {
+        listener.onBegin()
+    }
+
+    override fun onCommit() {
+        listener.onCommit()
+    }
+
+    override fun onRollback() {
+        listener.onRollback()
+    }
+
 }

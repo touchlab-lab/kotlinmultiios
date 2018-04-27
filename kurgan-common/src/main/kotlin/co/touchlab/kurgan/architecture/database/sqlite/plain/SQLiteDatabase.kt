@@ -1,8 +1,37 @@
 package co.touchlab.kurgan.architecture.database.sqlite.plain
 
+import co.touchlab.kurgan.architecture.ContentValues
 import co.touchlab.kurgan.architecture.database.Cursor
 
-expect interface CursorFactory
+
+
+
+expect interface CursorFactory{
+    fun newCursor(db: SQLiteDatabase,
+                  masterQuery: SQLiteCursorDriver,
+                  editTable: String,
+                  query: SQLiteQuery): Cursor
+}
+
+expect interface SQLiteTransactionListener{
+    /**
+     * Called immediately after the transaction begins.
+     */
+    fun onBegin()
+
+    /**
+     * Called immediately before commiting the transaction.
+     */
+    fun onCommit()
+
+    /**
+     * Called if the transaction is about to be rolled back.
+     */
+    fun onRollback()
+}
+
+expect interface SQLiteCursorDriver
+
 expect class SQLiteDatabase{
 
 
@@ -28,7 +57,7 @@ expect class SQLiteDatabase{
     fun execSQL(sql:String):Unit
     fun execSQL(sql:String, bindArgs:Array<Any?>):Unit
 
-    fun rawQueryWithFactory(cursorFactory: CursorFactory, sql:String, selectionArgs:Array<String>?, editTable: String?):Cursor
+    fun rawQueryWithFactory(cursorFactory: CursorFactory, sql:String, selectionArgs:Array<String?>?, editTable: String?):Cursor
 
     //CursorFactory cursorFactory, String sql, String[] selectionArgs,
     //            String editTable
@@ -52,5 +81,3 @@ expect class SQLiteDatabase{
 
     fun compileStatement(sql:String):SQLiteStatement
 }
-
-expect interface SQLiteTransactionListener

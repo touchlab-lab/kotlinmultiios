@@ -1,17 +1,14 @@
 package co.touchlab.kurgan.architecture.database.sqlite
 
+import co.touchlab.kurgan.architecture.Context
+import co.touchlab.kurgan.architecture.database.DatabaseErrorHandler
 import co.touchlab.kurgan.architecture.database.sqlite.plain.SQLiteDatabase
 import co.touchlab.kurgan.architecture.database.sqlite.plain.SQLiteOpenHelper
 import co.touchlab.kurgan.architecture.database.support.SupportSQLiteDatabase
 import co.touchlab.kurgan.architecture.database.support.SupportSQLiteOpenHelper
 
-class SizzleSQLiteOpenHelper: SupportSQLiteOpenHelper {
+class SizzleSQLiteOpenHelper(context: Context, name: String?, callback: SupportSQLiteOpenHelper.Callback) : SupportSQLiteOpenHelper {
     private var mDelegate: OpenHelper
-
-    constructor(context: Context, name: String?,
-                callback: SupportSQLiteOpenHelper.Callback){
-        mDelegate = createDelegate(context, name, callback)
-    }
 
     private fun createDelegate(context: Context, name: String?, callback: SupportSQLiteOpenHelper.Callback): OpenHelper {
         val dbRef = arrayOfNulls<SizzleSQLiteDatabase>(1)
@@ -19,7 +16,7 @@ class SizzleSQLiteOpenHelper: SupportSQLiteOpenHelper {
     }
 
     override fun getDatabaseName(): String {
-        return mDelegate.databaseName
+        return mDelegate.getDatabaseName()
     }
 
     override fun setWriteAheadLoggingEnabled(enabled: Boolean) {
@@ -41,11 +38,13 @@ class SizzleSQLiteOpenHelper: SupportSQLiteOpenHelper {
     internal class OpenHelper(context: Context, name: String?,
                               val mDbRef: Array<SizzleSQLiteDatabase?>,
                               val mCallback: SupportSQLiteOpenHelper.Callback) :
-            SQLiteOpenHelper(context, name, null, mCallback.version, DatabaseErrorHandler
+            SQLiteOpenHelper(context, name, null, mCallback.version, object : DatabaseErrorHandler
             {
-                val db = mDbRef[0]
-                if (db != null) {
-                    mCallback.onCorruption(db)
+                override fun onCorruption(dbObj: SQLiteDatabase) {
+                    val db = mDbRef[0]
+                    if (db != null) {
+                        mCallback.onCorruption(db)
+                    }
                 }
             })
     {
@@ -96,5 +95,9 @@ class SizzleSQLiteOpenHelper: SupportSQLiteOpenHelper {
             super.close()
             mDbRef[0] = null
         }
+    }
+
+    init {
+        mDelegate = createDelegate(context, name, callback)
     }
 }

@@ -1,7 +1,7 @@
 package co.touchlab.kurgan.architecture.database.support
 
+import co.touchlab.kurgan.architecture.ContentValues
 import co.touchlab.kurgan.architecture.database.*
-import co.touchlab.kurgan.architecture.database.sqlite.*
 
 interface SupportSQLiteDatabase {
     companion object {

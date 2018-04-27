@@ -1,6 +1,6 @@
 package co.touchlab.kurgan.architecture.database.sqlite.plain
 
-expect abstract class SQLiteProgram{
+expect abstract class SQLiteProgram:SQLiteClosable{
     fun bindNull(index:Int)
     fun bindLong(index:Int, value:Long)
     fun bindDouble(index:Int, value:Double)
