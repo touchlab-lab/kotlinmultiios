@@ -1,6 +1,7 @@
 package co.touchlab.kurgan.architecture.database.support
 
 import co.touchlab.kurgan.*
+import co.touchlab.kurgan.architecture.Context
 import co.touchlab.kurgan.architecture.DataContext
 
 expect fun deleteDatabase(path:String):Boolean
@@ -210,7 +211,7 @@ interface SupportSQLiteOpenHelper {
     /**
      * The configuration to create an SQLite open helper object using {@link Factory}.
      */
-    data class Configuration(val context: DataContext, val name: String?, val callback: Callback)
+    data class Configuration(val context: Context, val name: String?, val callback: Callback)
 
 
     /**
