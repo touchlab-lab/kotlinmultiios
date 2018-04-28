@@ -35,6 +35,7 @@ expect interface SQLiteTransactionListener{
 
 expect interface SQLiteCursorDriver
 
+/*
 fun SQLiteDatabase.query(query: String, bindArgs: Array<Any?>?): Cursor = query(SimpleSQLiteQuery(query, bindArgs))
 fun SQLiteDatabase.query(supportQuery: SupportSQLiteQuery): Cursor {
     return rawQueryWithFactory(
@@ -58,6 +59,7 @@ fun SQLiteDatabase.delete(table: String, whereClause: String?, whereArgs: Array<
 fun SQLiteDatabase.update(table: String, conflictAlgorithm: Int,
                           values: ContentValues, whereClause: String?, whereArgs: Array<Any?>?): Int =
         execUpdateStatement(this, table, conflictAlgorithm, values, whereClause, whereArgs)
+*/
 
 expect class SQLiteDatabase{
 

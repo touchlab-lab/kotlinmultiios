@@ -1,8 +1,5 @@
-package co.touchlab.kurgan.architecture.database.sqlite.plain
+package co.touchlab.kurgan.architecture.database.sqlite
 
-import android.database.AbstractCursor
-import android.database.AbstractWindowedCursor
-import android.database.CrossProcessCursor
 import android.database.sqlite.SQLiteClosable
 import android.database.sqlite.SQLiteCursor
 import android.database.sqlite.SQLiteCursorDriver
@@ -22,7 +19,5 @@ actual typealias CursorFactory = SQLiteDatabase.CursorFactory
 actual typealias SQLiteTransactionListener = SQLiteTransactionListener
 actual typealias SQLiteCursorDriver = SQLiteCursorDriver
 actual typealias SQLiteCursor = SQLiteCursor
-actual typealias AbstractWindowedCursor = AbstractWindowedCursor
-actual typealias AbstractCursor = AbstractCursor
 actual typealias SQLiteQuery = SQLiteQuery
-actual typealias CrossProcessCursor = CrossProcessCursor
+

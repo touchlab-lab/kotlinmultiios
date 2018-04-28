@@ -317,3 +317,7 @@ expect interface Cursor{
      */
     fun isClosed(): Boolean
 }
+
+expect interface CrossProcessCursor:Cursor
+expect abstract class AbstractCursor():CrossProcessCursor
+expect abstract class AbstractWindowedCursor():AbstractCursor

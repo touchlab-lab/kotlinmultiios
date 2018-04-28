@@ -1,4 +1,4 @@
-package co.touchlab.kurgan.architecture
+package co.touchlab.kurgan.architecture.database
 
 expect class ContentValues{
     fun size():Int
