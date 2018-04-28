@@ -1,9 +1,14 @@
+
 include ':kurgan-common'
-include ':kurgan-ios'
-//include ':kurgan-android'
 include ':jvm'
-include 'sample/common'
-include 'sample/ios'
+
+include ':kurgan-ios'
+//include ':kurgan-ios-andthen'
+
+//include ':kurgan-android'
+
+//include 'sample/common'
+//include 'sample/ios'
 //include 'sample/android'
 //include ':common'
 //include ':jvm'

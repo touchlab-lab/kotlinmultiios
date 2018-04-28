@@ -1,6 +1,7 @@
 package co.touchlab.kurgan.architecture.database.support
 
-import co.touchlab.kurgan.architecture.database.ContentValues
+import co.touchlab.kurgan.architecture.ContentValues
+
 
 fun execDeleteStatement(db: SupportSQLiteDatabase, table: String, whereClause: String?, whereArgs: Array<Any?>?): Int {
     val query = ("DELETE FROM " + table

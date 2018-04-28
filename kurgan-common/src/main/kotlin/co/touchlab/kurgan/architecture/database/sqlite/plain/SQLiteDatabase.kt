@@ -2,8 +2,11 @@ package co.touchlab.kurgan.architecture.database.sqlite.plain
 
 import co.touchlab.kurgan.architecture.ContentValues
 import co.touchlab.kurgan.architecture.database.Cursor
-
-
+import co.touchlab.kurgan.architecture.database.sqlite.SizzleSQLiteProgram
+import co.touchlab.kurgan.architecture.database.support.SimpleSQLiteQuery
+import co.touchlab.kurgan.architecture.database.support.SupportSQLiteQuery
+import co.touchlab.kurgan.architecture.database.support.execDeleteStatement
+import co.touchlab.kurgan.architecture.database.support.execUpdateStatement
 
 
 expect interface CursorFactory{
@@ -31,6 +34,30 @@ expect interface SQLiteTransactionListener{
 }
 
 expect interface SQLiteCursorDriver
+
+fun SQLiteDatabase.query(query: String, bindArgs: Array<Any?>?): Cursor = query(SimpleSQLiteQuery(query, bindArgs))
+fun SQLiteDatabase.query(supportQuery: SupportSQLiteQuery): Cursor {
+    return rawQueryWithFactory(
+            object : CursorFactory {
+                override fun newCursor(db: SQLiteDatabase, masterQuery: SQLiteCursorDriver, editTable: String, query: SQLiteQuery): Cursor {
+                    supportQuery.bindTo(SizzleSQLiteProgram(query))
+                    return SQLiteCursor(masterQuery, editTable, query)
+                }
+            },
+            supportQuery.getSql(),
+            arrayOfNulls(0),
+            null)
+}
+
+fun SQLiteDatabase.insert(table: String, conflictAlgorithm: Int, values: ContentValues): Long =
+        insertWithOnConflict(table, null, values, conflictAlgorithm)
+
+fun SQLiteDatabase.delete(table: String, whereClause: String?, whereArgs: Array<Any?>?): Int =
+        execDeleteStatement(this, table, whereClause, whereArgs)
+
+fun SQLiteDatabase.update(table: String, conflictAlgorithm: Int,
+                          values: ContentValues, whereClause: String?, whereArgs: Array<Any?>?): Int =
+        execUpdateStatement(this, table, conflictAlgorithm, values, whereClause, whereArgs)
 
 expect class SQLiteDatabase{
 
