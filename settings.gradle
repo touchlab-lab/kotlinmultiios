@@ -7,8 +7,8 @@ include ':kurgan-ios'
 
 //include ':kurgan-android'
 
-//include 'sample/common'
-//include 'sample/ios'
+include 'sample/common'
+include 'sample/ios'
 //include 'sample/android'
 //include ':common'
 //include ':jvm'

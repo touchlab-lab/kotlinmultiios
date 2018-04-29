@@ -1,6 +1,7 @@
 package co.touchlab.kurgan.architecture.database.sqlite
 
 import co.touchlab.kurgan.architecture.database.*
+import co.touchlab.kurgan.j2objc.*
 import objcsrc.*
 
 actual class SQLiteDatabase(val db:AndroidDatabaseSqliteSQLiteDatabase){
@@ -13,13 +14,15 @@ actual class SQLiteDatabase(val db:AndroidDatabaseSqliteSQLiteDatabase){
     }
 
     actual fun beginTransactionWithListener(transactionListener: SQLiteTransactionListener):Unit{
-//        db.beginTransactionWithListenerWithAndroidDatabaseSqliteSQLiteTransactionListener()
-        TODO()
+        db.beginTransactionWithListenerWithAndroidDatabaseSqliteSQLiteTransactionListener(
+                WrappedTransactionListener(transactionListener)
+        )
     }
 
     actual fun beginTransactionWithListenerNonExclusive(transactionListener: SQLiteTransactionListener):Unit{
-//        db.beginTransactionWithListenerNonExclusiveWithAndroidDatabaseSqliteSQLiteTransactionListener()
-        TODO()
+        db.beginTransactionWithListenerNonExclusiveWithAndroidDatabaseSqliteSQLiteTransactionListener(
+                WrappedTransactionListener(transactionListener)
+        )
     }
 
     actual fun endTransaction():Unit{
@@ -58,6 +61,19 @@ actual class SQLiteDatabase(val db:AndroidDatabaseSqliteSQLiteDatabase){
         TODO()
     }
 
+    actual fun query(distinct:Boolean, table:String, columns:Array<String>?, selection:String?,
+              selectionArgs:Array<String>?, groupBy:String?, having:String?,
+              orderBy:String?, limit:String?):Cursor{
+        return IosCursor(db.queryWithBoolean(
+                distinct, table, stringArrayAsIos(columns), selection, stringArrayAsIos(selectionArgs),
+                groupBy, having, orderBy, limit
+        )!!)
+    }
+
+    actual fun rawQuery(sql:String, selectionArgs:Array<String>?):Cursor{
+        return IosCursor(db.rawQueryWithNSString(sql, stringArrayAsIos(selectionArgs))!!)
+    }
+
     actual fun rawQueryWithFactory(cursorFactory: CursorFactory, sql:String, selectionArgs:Array<String?>?, editTable: String?): Cursor{
         TODO()
     }
@@ -68,7 +84,6 @@ actual class SQLiteDatabase(val db:AndroidDatabaseSqliteSQLiteDatabase){
     actual fun isReadOnly():Boolean = db.isReadOnly()
     actual fun isOpen():Boolean = db.isOpen()
     actual fun needUpgrade(newVersion:Int):Boolean = db.needUpgradeWithInt(newVersion)
-
 
     /**
      * Source docs tell me this can't be null, even if in memory.
@@ -92,7 +107,6 @@ actual class SQLiteDatabase(val db:AndroidDatabaseSqliteSQLiteDatabase){
     }
 
     actual fun compileStatement(sql:String): SQLiteStatement{
-        TODO()
-//        = db.compileStatementWithNSString(sql)
+        return SQLiteStatement(db.compileStatementWithNSString(sql)!!)
     }
 }

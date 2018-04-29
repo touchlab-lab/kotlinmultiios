@@ -1,9 +1,7 @@
 package co.touchlab.kurgan.play.notepad
 
-import co.touchlab.kurgan.architecture.DataContext
 import co.touchlab.kurgan.architecture.database.ContentValues
-import co.touchlab.kurgan.architecture.database.support.SupportSQLiteDatabase
-import co.touchlab.kurgan.architecture.database.support.SupportSQLiteOpenHelper
+import co.touchlab.kurgan.architecture.database.sqlite.*
 import co.touchlab.kurgan.play.notepad.NoteColumns.Companion.NOTE
 import co.touchlab.kurgan.play.notepad.NoteColumns.Companion.TITLE
 import co.touchlab.kurgan.play.notepad.NoteColumns.Companion.NOTES_TABLE_NAME
@@ -11,10 +9,15 @@ import co.touchlab.kurgan.util.currentTimeMillis
 
 class NoteDbHelper {
     companion object {
-        fun initDatabase(dataContext: DataContext): SupportSQLiteOpenHelper.Configuration
+        fun initDatabase(): SQLiteOpenHelper{
+            return createOpenHelper("holla", initCallback(), null)
+        }
+
+        fun initCallback(): PlatformSQLiteOpenHelperCallback
         {
-            return SupportSQLiteOpenHelper.Configuration(dataContext, "HelloDb", object : SupportSQLiteOpenHelper.Callback(2){
-                override fun onCreate(db: SupportSQLiteDatabase) {
+
+            return object : PlatformSQLiteOpenHelperCallback(2){
+                override fun onCreate(db: SQLiteDatabase) {
                     db.execSQL(
                     "CREATE TABLE " + NOTES_TABLE_NAME + " ("
                     + NoteColumns._ID + " INTEGER PRIMARY KEY,"
@@ -26,15 +29,14 @@ class NoteDbHelper {
                     println("Create table success!!!!!")
                 }
 
-                override fun onUpgrade(db: SupportSQLiteDatabase, oldVersion: Int, newVersion: Int) {
+                override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
                     db.execSQL("DROP TABLE IF EXISTS notes")
                     onCreate(db)
                 }
-
-            })
+            }
         }
 
-        fun insertNotes(db: SupportSQLiteDatabase, note:Array<Pair<String,String>>){
+        fun insertNotes(db: SQLiteDatabase, note:Array<Pair<String,String>>){
             db.beginTransaction()
             try {
 
@@ -58,7 +60,7 @@ class NoteDbHelper {
 
         val TEST_NOTE_COUNT = 100000
 
-        fun createTestNotes(db: SupportSQLiteDatabase, count:Int) {
+        fun createTestNotes(db: SQLiteDatabase, count:Int) {
             val list = ArrayList<Pair<String,String>>(count)
             for(i in 0..count) {
                 list.add(Pair("title $i", "note $i"))
@@ -67,10 +69,10 @@ class NoteDbHelper {
             insertNotes(db, list.toTypedArray())
         }
 
-        fun queryData(db: SupportSQLiteDatabase, count:Int) {
+        fun queryData(db: SQLiteDatabase, count:Int) {
             val list = ArrayList<Pair<String,String>>(TEST_NOTE_COUNT)
 
-            val cursor = db.query(
+            val cursor = db.rawQuery(
                     "select * from $NOTES_TABLE_NAME " +
                     "order by ${NoteColumns.CREATED_DATE} desc " +
                     "limit $count"

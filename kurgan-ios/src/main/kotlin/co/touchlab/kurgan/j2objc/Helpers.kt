@@ -36,10 +36,27 @@ fun byteArrayToIOSByteArray(inp: ByteArray?):IOSByteArray?{
     return out
 }
 
-fun stringArrayAsIos(inp: Array<String?>):IOSObjectArray?{
+fun stringArrayAsIos(inp: Array<String?>?):IOSObjectArray?{
+
+    if(inp == null)
+        return null
 
     val arrayLength = inp.size.toLong()
-    val out = ComKgalliganJustdbextractSharedTypeHelper.stringArrayWithInt(arrayLength.toInt())
+    val out = ComKgalliganJustdbextractSharedTypeHelper.stringArrayWithInt(arrayLength.toInt())!!
+    for(i in 0 until arrayLength)
+    {
+        ComKgalliganJustdbextractSharedTypeHelper.replaceStringAtIndexWithNSStringArray(out, inp[i.toInt()], i.toInt())
+    }
+    return out
+}
+
+fun stringArrayAsIos(inp: Array<String>?):IOSObjectArray?{
+
+    if(inp == null)
+        return null
+
+    val arrayLength = inp.size.toLong()
+    val out = ComKgalliganJustdbextractSharedTypeHelper.stringArrayWithInt(arrayLength.toInt())!!
     for(i in 0 until arrayLength)
     {
         ComKgalliganJustdbextractSharedTypeHelper.replaceStringAtIndexWithNSStringArray(out, inp[i.toInt()], i.toInt())

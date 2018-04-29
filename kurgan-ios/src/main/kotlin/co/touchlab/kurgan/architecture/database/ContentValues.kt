@@ -33,7 +33,7 @@ actual class ContentValues {
     /**
      * Creates an empty set of values using the default initial size
      */
-    constructor() {
+    actual constructor() {
         // Choosing a default size of 8 based on analysis of typical
         // consumption by applications.
         mValues = HashMap(8)
@@ -44,7 +44,7 @@ actual class ContentValues {
      *
      * @param size the initial size of the set of values
      */
-    constructor(size: Int) {
+    actual constructor(size: Int) {
         mValues = HashMap(size)
     }
 
@@ -53,7 +53,7 @@ actual class ContentValues {
      *
      * @param from the values to copy
      */
-    constructor(from: ContentValues) {
+    actual constructor(from: ContentValues) {
         mValues = HashMap(from.mValues)
     }
 
@@ -85,10 +85,9 @@ actual class ContentValues {
      * @param key the name of the value to put
      * @param value the data for the value to put
      */
-    fun put(key: String, value: String) {
+    actual fun put(key: String, value: String) {
         synchronized(mLock, {
             val size = mValues.size
-            println("The size: $size")
         })
         mValues.put(key, value)
     }
@@ -106,7 +105,7 @@ actual class ContentValues {
      * @param key the name of the value to put
      * @param value the data for the value to put
      */
-    fun put(key: String, value: Byte) {
+    actual fun put(key: String, value: Byte) {
         mValues.put(key, value)
     }
 
@@ -116,7 +115,7 @@ actual class ContentValues {
      * @param key the name of the value to put
      * @param value the data for the value to put
      */
-    fun put(key: String, value: Short) {
+    actual fun put(key: String, value: Short) {
         mValues.put(key, value)
     }
 
@@ -126,7 +125,7 @@ actual class ContentValues {
      * @param key the name of the value to put
      * @param value the data for the value to put
      */
-    fun put(key: String, value: Int) {
+    actual fun put(key: String, value: Int) {
         mValues.put(key, value);
     }
 
@@ -136,7 +135,7 @@ actual class ContentValues {
      * @param key the name of the value to put
      * @param value the data for the value to put
      */
-    fun put(key: String, value: Long) {
+    actual fun put(key: String, value: Long) {
         mValues.put(key, value);
     }
 
@@ -146,7 +145,7 @@ actual class ContentValues {
      * @param key the name of the value to put
      * @param value the data for the value to put
      */
-    fun put(key: String, value: Float) {
+    actual fun put(key: String, value: Float) {
         mValues.put(key, value);
     }
 
@@ -156,7 +155,7 @@ actual class ContentValues {
      * @param key the name of the value to put
      * @param value the data for the value to put
      */
-    fun put(key: String, value: Double) {
+    actual fun put(key: String, value: Double) {
         mValues.put(key, value);
     }
 
@@ -166,7 +165,7 @@ actual class ContentValues {
      * @param key the name of the value to put
      * @param value the data for the value to put
      */
-    fun put(key: String, value: Boolean) {
+    actual fun put(key: String, value: Boolean) {
         mValues.put(key, value);
     }
 
@@ -185,7 +184,7 @@ actual class ContentValues {
      *
      * @param key the name of the value to make null
      */
-    fun putNull(key: String) {
+    actual fun putNull(key: String) {
         mValues.put(key, null)
     }
 
@@ -201,14 +200,14 @@ actual class ContentValues {
      *
      * @param key the name of the value to remove
      */
-    fun remove(key: String) {
+    actual fun remove(key: String) {
         mValues.remove(key)
     }
 
     /**
      * Removes all values.
      */
-    fun clear() = mValues.clear()
+    actual fun clear() = mValues.clear()
 
     /**
      * Returns true if this object has the named value.
@@ -216,7 +215,7 @@ actual class ContentValues {
      * @param key the value to check for
      * @return {@code true} if the value is present, {@code false} otherwise
      */
-    fun containsKey(key: String): Boolean = mValues.containsKey(key)
+    actual fun containsKey(key: String): Boolean = mValues.containsKey(key)
 
     /**
      * Gets a value. Valid value types are {@link String}, {@link Boolean}, and
@@ -233,7 +232,7 @@ actual class ContentValues {
      * @param key the value to get
      * @return the String for the value
      */
-    fun getAsString(key: String): String? = mValues.get(key)?.toString()
+    actual fun getAsString(key: String): String? = mValues.get(key)?.toString()
 
     /**
      * Gets a value that is a byte array. Note that this method will not convert

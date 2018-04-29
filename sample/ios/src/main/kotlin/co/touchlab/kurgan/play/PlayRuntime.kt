@@ -1,9 +1,7 @@
 package co.touchlab.kurgan.play
 
 import co.touchlab.kurgan.architecture.*
-import co.touchlab.kurgan.architecture.database.framework.*
-import co.touchlab.kurgan.architecture.database.support.SupportSQLiteDatabase
-import co.touchlab.kurgan.architecture.database.support.SupportSQLiteOpenHelper
+import co.touchlab.kurgan.architecture.database.sqlite.*
 import co.touchlab.kurgan.play.notepad.*
 import kotlinx.cinterop.*
 import objcsrc.*
@@ -19,11 +17,12 @@ fun helloInsertRow(){
 class PlayRuntime(){
     companion object {
         val context = AndroidContentIOSContext()
-        val dataContext : DataContext = IosDataContext(context)
-        var dbOpenHelper:SupportSQLiteOpenHelper? = null
+
+        var dbOpenHelper:SQLiteOpenHelper? = null
         fun helloStart(){
             DopplRuntime.start()
-            dbOpenHelper = initDatabase()
+            initApplicationDb(context)
+            dbOpenHelper = NoteDbHelper.initDatabase()
 
             val db = dbOpenHelper!!.getWritableDatabase()
             val insertCount = 15000
@@ -41,9 +40,5 @@ class PlayRuntime(){
 
         }
 
-        fun initDatabase():SupportSQLiteOpenHelper
-        {
-            return FrameworkSQLiteOpenHelperFactory().create(NoteDbHelper.initDatabase(dataContext))
-        }
     }
 }

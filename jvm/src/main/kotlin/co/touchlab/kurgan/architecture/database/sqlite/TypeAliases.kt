@@ -1,7 +1,6 @@
 package co.touchlab.kurgan.architecture.database.sqlite
 
 import android.database.sqlite.SQLiteClosable
-import android.database.sqlite.SQLiteCursor
 import android.database.sqlite.SQLiteCursorDriver
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
@@ -18,6 +17,5 @@ actual typealias SQLiteDatabase = SQLiteDatabase
 actual typealias CursorFactory = SQLiteDatabase.CursorFactory
 actual typealias SQLiteTransactionListener = SQLiteTransactionListener
 actual typealias SQLiteCursorDriver = SQLiteCursorDriver
-actual typealias SQLiteCursor = SQLiteCursor
 actual typealias SQLiteQuery = SQLiteQuery
 

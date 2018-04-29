@@ -21,21 +21,6 @@ actual abstract class SQLiteOpenHelper(
         return SQLiteDatabase(openHelper.getReadableDatabase()!!)
     }
 
-    /*actual abstract fun onCreate(db: SQLiteDatabase):Unit
-    actual abstract fun onUpgrade(db: SQLiteDatabase, oldVersion:Int, newVersion:Int):Unit
-
-    actual open fun onDowngrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int): Unit {
-        openHelper.onDowngradeWithAndroidDatabaseSqliteSQLiteDatabase(db.db, oldVersion, newVersion)
-    }
-
-    actual open fun onOpen(db: SQLiteDatabase): Unit {
-        openHelper.onOpenWithAndroidDatabaseSqliteSQLiteDatabase(db.db)
-    }
-
-    actual open fun onConfigure(db: SQLiteDatabase): Unit {
-        openHelper.onConfigureWithAndroidDatabaseSqliteSQLiteDatabase(db.db)
-    }*/
-
     actual open fun close() {
         openHelper.close()
     }
