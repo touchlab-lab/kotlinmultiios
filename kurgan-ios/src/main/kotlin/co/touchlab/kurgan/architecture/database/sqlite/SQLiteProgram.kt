@@ -1,4 +1,4 @@
-package co.touchlab.kurgan.architecture.database.sqlite.plain
+package co.touchlab.kurgan.architecture.database.sqlite
 
 import objcsrc.*
 import co.touchlab.kurgan.j2objc.*

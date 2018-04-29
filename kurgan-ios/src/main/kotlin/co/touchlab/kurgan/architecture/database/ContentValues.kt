@@ -1,6 +1,30 @@
-package co.touchlab.kurgan.architecture
+package co.touchlab.kurgan.architecture.database
+
+import objcsrc.*
+import co.touchlab.kurgan.j2objc.*
 
 actual class ContentValues {
+
+    fun platformValues():AndroidContentContentValues{
+        val acv = AndroidContentContentValues(mValues.size)
+        for(colName in keySet()){
+            val arg = mValues.get(colName)
+            when (arg) {
+                null -> acv.putNullWithNSString(colName)
+                is ByteArray -> acv.putWithNSString(colName, byteArrayToIOSByteArray(arg))
+                is Float -> acv.putWithNSString(colName, JavaLangFloat.valueOfWithFloat(arg)!!)
+                is Double -> acv.putWithNSString(colName, JavaLangDouble.valueOfWithDouble(arg)!!)
+                is Long -> acv.putWithNSString(colName, JavaLangLong.valueOfWithLong(arg)!!)
+                is Int -> acv.putWithNSString(colName, JavaLangInteger.valueOfWithInt(arg)!!)
+                is Short -> acv.putWithNSString(colName, JavaLangShort.valueOfWithShort(arg)!!)
+                is Byte -> acv.putWithNSString(colName, JavaLangByte.valueOfWithByte(arg)!!)
+                is String -> acv.putWithNSString(colName, arg)
+                else -> throw IllegalArgumentException("Cannot bind $arg with name $colName")
+            }
+        }
+
+        return acv
+    }
 
     /** Holds the actual values */
     val mValues: HashMap<String, Any?>

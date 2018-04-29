@@ -1,4 +1,4 @@
-package co.touchlab.kurgan.architecture.database.sqlite.plain
+package co.touchlab.kurgan.architecture.database.sqlite
 
 actual interface SQLiteTransactionListener{
     /**

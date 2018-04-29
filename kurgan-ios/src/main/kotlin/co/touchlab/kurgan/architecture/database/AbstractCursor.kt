@@ -1,4 +1,4 @@
-package co.touchlab.kurgan.architecture.database.sqlite.plain
+package co.touchlab.kurgan.architecture.database
 
 import co.touchlab.kurgan.architecture.database.Cursor
 

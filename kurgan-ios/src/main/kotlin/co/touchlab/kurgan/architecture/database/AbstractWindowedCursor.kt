@@ -1,3 +1,3 @@
-package co.touchlab.kurgan.architecture.database.sqlite.plain
+package co.touchlab.kurgan.architecture.database
 
 actual abstract class AbstractWindowedCursor actual constructor():AbstractCursor()
