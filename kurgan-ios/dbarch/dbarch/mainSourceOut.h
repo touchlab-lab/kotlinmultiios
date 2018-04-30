@@ -111,6 +111,7 @@ J2OBJC_TYPE_LITERAL_HEADER(ComKgalliganJustdbextractSharedIosSQLiteTransactionLi
 #if !defined (ComKgalliganJustdbextractSharedTypeHelper_) && (INCLUDE_ALL_MainSourceOut || defined(INCLUDE_ComKgalliganJustdbextractSharedTypeHelper))
 #define ComKgalliganJustdbextractSharedTypeHelper_
 
+@class IOSByteArray;
 @class IOSObjectArray;
 @protocol JavaUtilList;
 
@@ -120,7 +121,17 @@ J2OBJC_TYPE_LITERAL_HEADER(ComKgalliganJustdbextractSharedIosSQLiteTransactionLi
 
 - (instancetype __nonnull)init;
 
++ (IOSObjectArray *)createObjectArrayWithInt:(jint)length;
+
++ (NSString *)justTestingFromUtf8WithByteArray:(IOSByteArray *)b;
+
++ (IOSByteArray *)justTestingToUtf8WithNSString:(NSString *)s;
+
 + (IOSObjectArray *)listToArrayWithJavaUtilList:(id<JavaUtilList>)asdf;
+
++ (void)replaceObjectAtIndexWithNSObjectArray:(IOSObjectArray *)arr
+                                       withId:(id)o
+                                      withInt:(jint)index;
 
 + (void)replaceStringAtIndexWithNSStringArray:(IOSObjectArray *)arr
                                  withNSString:(NSString *)s
@@ -145,9 +156,17 @@ FOUNDATION_EXPORT IOSObjectArray *ComKgalliganJustdbextractSharedTypeHelper_stri
 
 FOUNDATION_EXPORT void ComKgalliganJustdbextractSharedTypeHelper_replaceStringAtIndexWithNSStringArray_withNSString_withInt_(IOSObjectArray *arr, NSString *s, jint index);
 
+FOUNDATION_EXPORT void ComKgalliganJustdbextractSharedTypeHelper_replaceObjectAtIndexWithNSObjectArray_withId_withInt_(IOSObjectArray *arr, id o, jint index);
+
+FOUNDATION_EXPORT IOSObjectArray *ComKgalliganJustdbextractSharedTypeHelper_createObjectArrayWithInt_(jint length);
+
 FOUNDATION_EXPORT NSString *ComKgalliganJustdbextractSharedTypeHelper_stringAtIndexWithNSStringArray_withInt_(IOSObjectArray *arr, jint index);
 
 FOUNDATION_EXPORT IOSObjectArray *ComKgalliganJustdbextractSharedTypeHelper_listToArrayWithJavaUtilList_(id<JavaUtilList> asdf);
+
+FOUNDATION_EXPORT IOSByteArray *ComKgalliganJustdbextractSharedTypeHelper_justTestingToUtf8WithNSString_(NSString *s);
+
+FOUNDATION_EXPORT NSString *ComKgalliganJustdbextractSharedTypeHelper_justTestingFromUtf8WithByteArray_(IOSByteArray *b);
 
 J2OBJC_TYPE_LITERAL_HEADER(ComKgalliganJustdbextractSharedTypeHelper)
 

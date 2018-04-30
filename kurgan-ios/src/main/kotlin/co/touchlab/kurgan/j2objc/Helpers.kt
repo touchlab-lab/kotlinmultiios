@@ -13,13 +13,18 @@ fun iosByteArrayToByteArray(inp: IOSByteArray?):ByteArray?{
     if(inp == null)
         return null
 
-    val arrayLength = inp.length().toLong()
-    val out = ByteArray(arrayLength.toInt())
-    for(i in 0 until arrayLength)
-    {
-        out[i.toInt()] = inp.byteAtIndex(i.toLong())
+    val arrayLength = inp.length().toInt()
+    var returnBytes:ByteArray? = null
+    memScoped {
+        val nativeArray = allocArray<jbyteVar>(arrayLength)
+        inp.getBytes(nativeArray, arrayLength.toLong())
+        /*val out = ByteArray(arrayLength.toInt())
+        for (i in 0 until arrayLength) {
+            out[i.toInt()] = inp.byteAtIndex(i.toLong())
+        }*/
+        returnBytes = nativeArray.readBytes(arrayLength)
     }
-    return out
+    return returnBytes
 }
 
 fun byteArrayToIOSByteArray(inp: ByteArray?):IOSByteArray?{
@@ -29,10 +34,15 @@ fun byteArrayToIOSByteArray(inp: ByteArray?):IOSByteArray?{
 
     val arrayLength = inp.size.toLong()
     val out = IOSByteArray.arrayWithLength(arrayLength)!!
-    for(i in 0 until arrayLength)
+    memScoped{
+        val cp = allocArrayOf(inp)
+        out.replaceBytes(cp, arrayLength.toInt(), 0)
+    }
+
+    /*for(i in 0 until arrayLength)
     {
         out.replaceByteAtIndex(i, inp[i.toInt()])
-    }
+    }*/
     return out
 }
 
@@ -73,4 +83,17 @@ fun iosObjectArrayToStringArray(iosArray: IOSObjectArray?):Array<String>?{
                 ComKgalliganJustdbextractSharedTypeHelper.stringAtIndexWithNSStringArray(iosArray, i) ?: ""
             })
     return out
+}
+
+fun anyArrayToIosObjectArray(a:Array<Any?>?):IOSObjectArray?{
+    if(a == null)
+        return null
+    val insize = a.size
+    val outp = ComKgalliganJustdbextractSharedTypeHelper.createObjectArrayWithInt(insize)
+    for(i in 0 until insize)
+    {
+        ComKgalliganJustdbextractSharedTypeHelper.replaceObjectAtIndexWithNSObjectArray(outp, a[i], i)
+    }
+
+    return outp
 }

@@ -5,7 +5,10 @@
 
 #include "IOSClass.h"
 #include "IOSObjectArray.h"
+#include "IOSPrimitiveArray.h"
 #include "J2ObjC_source.h"
+#include "java/nio/charset/Charset.h"
+#include "java/nio/charset/StandardCharsets.h"
 #include "java/util/List.h"
 #include "mainDependencyOut.h"
 #include "mainSourceOut.h"
@@ -155,6 +158,16 @@ J2OBJC_IGNORE_DESIGNATED_END
   ComKgalliganJustdbextractSharedTypeHelper_replaceStringAtIndexWithNSStringArray_withNSString_withInt_(arr, s, index);
 }
 
++ (void)replaceObjectAtIndexWithNSObjectArray:(IOSObjectArray *)arr
+                                       withId:(id)o
+                                      withInt:(jint)index {
+  ComKgalliganJustdbextractSharedTypeHelper_replaceObjectAtIndexWithNSObjectArray_withId_withInt_(arr, o, index);
+}
+
++ (IOSObjectArray *)createObjectArrayWithInt:(jint)length {
+  return ComKgalliganJustdbextractSharedTypeHelper_createObjectArrayWithInt_(length);
+}
+
 + (NSString *)stringAtIndexWithNSStringArray:(IOSObjectArray *)arr
                                      withInt:(jint)index {
   return ComKgalliganJustdbextractSharedTypeHelper_stringAtIndexWithNSStringArray_withInt_(arr, index);
@@ -164,13 +177,25 @@ J2OBJC_IGNORE_DESIGNATED_END
   return ComKgalliganJustdbextractSharedTypeHelper_listToArrayWithJavaUtilList_(asdf);
 }
 
++ (IOSByteArray *)justTestingToUtf8WithNSString:(NSString *)s {
+  return ComKgalliganJustdbextractSharedTypeHelper_justTestingToUtf8WithNSString_(s);
+}
+
++ (NSString *)justTestingFromUtf8WithByteArray:(IOSByteArray *)b {
+  return ComKgalliganJustdbextractSharedTypeHelper_justTestingFromUtf8WithByteArray_(b);
+}
+
 + (const J2ObjcClassInfo *)__metadata {
   static J2ObjcMethodInfo methods[] = {
     { NULL, NULL, 0x1, -1, -1, -1, -1, -1, -1 },
     { NULL, "[LNSString;", 0x9, 0, 1, -1, -1, -1, -1 },
     { NULL, "V", 0x9, 2, 3, -1, -1, -1, -1 },
-    { NULL, "LNSString;", 0x9, 4, 5, -1, -1, -1, -1 },
-    { NULL, "[LNSObject;", 0x9, 6, 7, -1, 8, -1, -1 },
+    { NULL, "V", 0x9, 4, 5, -1, -1, -1, -1 },
+    { NULL, "[LNSObject;", 0x9, 6, 1, -1, -1, -1, -1 },
+    { NULL, "LNSString;", 0x9, 7, 8, -1, -1, -1, -1 },
+    { NULL, "[LNSObject;", 0x9, 9, 10, -1, 11, -1, -1 },
+    { NULL, "[B", 0x9, 12, 13, -1, -1, -1, -1 },
+    { NULL, "LNSString;", 0x9, 14, 15, -1, -1, -1, -1 },
   };
   #pragma clang diagnostic push
   #pragma clang diagnostic ignored "-Wobjc-multiple-method-names"
@@ -178,11 +203,15 @@ J2OBJC_IGNORE_DESIGNATED_END
   methods[0].selector = @selector(init);
   methods[1].selector = @selector(stringArrayWithInt:);
   methods[2].selector = @selector(replaceStringAtIndexWithNSStringArray:withNSString:withInt:);
-  methods[3].selector = @selector(stringAtIndexWithNSStringArray:withInt:);
-  methods[4].selector = @selector(listToArrayWithJavaUtilList:);
+  methods[3].selector = @selector(replaceObjectAtIndexWithNSObjectArray:withId:withInt:);
+  methods[4].selector = @selector(createObjectArrayWithInt:);
+  methods[5].selector = @selector(stringAtIndexWithNSStringArray:withInt:);
+  methods[6].selector = @selector(listToArrayWithJavaUtilList:);
+  methods[7].selector = @selector(justTestingToUtf8WithNSString:);
+  methods[8].selector = @selector(justTestingFromUtf8WithByteArray:);
   #pragma clang diagnostic pop
-  static const void *ptrTable[] = { "stringArray", "I", "replaceStringAtIndex", "[LNSString;LNSString;I", "stringAtIndex", "[LNSString;I", "listToArray", "LJavaUtilList;", "(Ljava/util/List<Ljava/lang/Object;>;)[Ljava/lang/Object;" };
-  static const J2ObjcClassInfo _ComKgalliganJustdbextractSharedTypeHelper = { "TypeHelper", "com.kgalligan.justdbextract.shared", ptrTable, methods, NULL, 7, 0x1, 5, 0, -1, -1, -1, -1, -1 };
+  static const void *ptrTable[] = { "stringArray", "I", "replaceStringAtIndex", "[LNSString;LNSString;I", "replaceObjectAtIndex", "[LNSObject;LNSObject;I", "createObjectArray", "stringAtIndex", "[LNSString;I", "listToArray", "LJavaUtilList;", "(Ljava/util/List<Ljava/lang/Object;>;)[Ljava/lang/Object;", "justTestingToUtf8", "LNSString;", "justTestingFromUtf8", "[B" };
+  static const J2ObjcClassInfo _ComKgalliganJustdbextractSharedTypeHelper = { "TypeHelper", "com.kgalligan.justdbextract.shared", ptrTable, methods, NULL, 7, 0x1, 9, 0, -1, -1, -1, -1, -1 };
   return &_ComKgalliganJustdbextractSharedTypeHelper;
 }
 
@@ -210,6 +239,16 @@ void ComKgalliganJustdbextractSharedTypeHelper_replaceStringAtIndexWithNSStringA
   IOSObjectArray_Set(nil_chk(arr), index, s);
 }
 
+void ComKgalliganJustdbextractSharedTypeHelper_replaceObjectAtIndexWithNSObjectArray_withId_withInt_(IOSObjectArray *arr, id o, jint index) {
+  ComKgalliganJustdbextractSharedTypeHelper_initialize();
+  IOSObjectArray_Set(nil_chk(arr), index, o);
+}
+
+IOSObjectArray *ComKgalliganJustdbextractSharedTypeHelper_createObjectArrayWithInt_(jint length) {
+  ComKgalliganJustdbextractSharedTypeHelper_initialize();
+  return [IOSObjectArray arrayWithLength:length type:NSObject_class_()];
+}
+
 NSString *ComKgalliganJustdbextractSharedTypeHelper_stringAtIndexWithNSStringArray_withInt_(IOSObjectArray *arr, jint index) {
   ComKgalliganJustdbextractSharedTypeHelper_initialize();
   return IOSObjectArray_Get(nil_chk(arr), index);
@@ -218,6 +257,16 @@ NSString *ComKgalliganJustdbextractSharedTypeHelper_stringAtIndexWithNSStringArr
 IOSObjectArray *ComKgalliganJustdbextractSharedTypeHelper_listToArrayWithJavaUtilList_(id<JavaUtilList> asdf) {
   ComKgalliganJustdbextractSharedTypeHelper_initialize();
   return [((id<JavaUtilList>) nil_chk(asdf)) toArray];
+}
+
+IOSByteArray *ComKgalliganJustdbextractSharedTypeHelper_justTestingToUtf8WithNSString_(NSString *s) {
+  ComKgalliganJustdbextractSharedTypeHelper_initialize();
+  return [((NSString *) nil_chk(s)) java_getBytesWithCharset:JreLoadStatic(JavaNioCharsetStandardCharsets, UTF_8)];
+}
+
+NSString *ComKgalliganJustdbextractSharedTypeHelper_justTestingFromUtf8WithByteArray_(IOSByteArray *b) {
+  ComKgalliganJustdbextractSharedTypeHelper_initialize();
+  return [NSString java_stringWithBytes:b charset:JreLoadStatic(JavaNioCharsetStandardCharsets, UTF_8)];
 }
 
 J2OBJC_CLASS_TYPE_LITERAL_SOURCE(ComKgalliganJustdbextractSharedTypeHelper)

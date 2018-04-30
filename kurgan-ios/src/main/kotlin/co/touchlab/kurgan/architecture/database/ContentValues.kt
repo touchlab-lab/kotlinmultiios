@@ -97,7 +97,7 @@ actual class ContentValues {
      *
      * @param other the ContentValues from which to copy
      */
-    fun putAll(other: ContentValues) = mValues.putAll(other.mValues)
+    actual fun putAll(other: ContentValues) = mValues.putAll(other.mValues)
 
     /**
      * Adds a value to the set.
@@ -175,7 +175,7 @@ actual class ContentValues {
      * @param key the name of the value to put
      * @param value the data for the value to put
      */
-    fun put(key: String, value: ByteArray) {
+    actual fun put(key: String, value: ByteArray) {
         mValues.put(key, value);
     }
 
@@ -234,6 +234,16 @@ actual class ContentValues {
      */
     actual fun getAsString(key: String): String? = mValues.get(key)?.toString()
 
+    actual fun getAsLong(key: String): Long?{TODO()}
+    actual fun getAsInteger(key: String): Int?{
+        TODO()
+    }
+    actual fun getAsShort(key: String): Short?{TODO()}
+    actual fun getAsByte(key: String): Byte?{TODO()}
+    actual fun getAsDouble(key: String): Double?{TODO()}
+    actual fun getAsFloat(key: String): Float?{TODO()}
+    actual fun getAsBoolean(key: String): Boolean?{TODO()}
+
     /**
      * Gets a value that is a byte array. Note that this method will not convert
      * any other types to byte arrays.
@@ -241,7 +251,9 @@ actual class ContentValues {
      * @param key the value to get
      * @return the byte[] value, or null is the value is missing or not a byte[]
      */
-    fun getAsByteArray(key: String): ByteArray? = mValues[key] as? ByteArray
+    actual fun getAsByteArray(key: String): ByteArray? = mValues[key] as? ByteArray
+
+    actual fun valueSet(): Set<Map.Entry<String,Any?>> = mValues.entries
 
     actual fun keySet(): Set<String> = mValues.keys
 }

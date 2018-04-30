@@ -30,6 +30,8 @@ class NoteColumns
          */
         val MODIFIED_DATE = "modified"
 
+        val HI_BLOB = "hiblob"
+
         /**
          * The unique ID for a row.
          * <P>Type: INTEGER (long)</P>

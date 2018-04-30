@@ -109,6 +109,10 @@ fun SQLiteDatabase.update(table: String, conflictAlgorithm: Int,
 fun SQLiteDatabase.insert(table: String, conflictAlgorithm: Int = CONFLICT_ABORT, values: ContentValues): Long =
         insertWithOnConflict(table, null, values, conflictAlgorithm)
 
+fun SQLiteDatabase.update(table: String, conflictAlgorithm: Int = CONFLICT_ABORT,
+                          values: ContentValues, whereClause: String? = null, whereArgs: Array<String>? = null): Int =
+        updateWithOnConflict(table, values, whereClause, whereArgs, conflictAlgorithm)
+
 expect class SQLiteDatabase{
 
     fun beginTransaction():Unit
@@ -118,7 +122,6 @@ expect class SQLiteDatabase{
     fun endTransaction():Unit
     fun setTransactionSuccessful():Unit
     fun inTransaction(): Boolean
-    fun isDbLockedByCurrentThread(): Boolean
     fun yieldIfContendedSafely(): Boolean
     fun yieldIfContendedSafely(sleepAfterYieldDelay: Long): Boolean
     fun getVersion():Int
@@ -128,14 +131,21 @@ expect class SQLiteDatabase{
     fun getPageSize():Long
     fun setPageSize(value:Long)
 
+    fun compileStatement(sql:String): SQLiteStatement
+
+    fun query(distinct:Boolean=false, table:String, columns:Array<String>? = null, selection:String? = null,
+              selectionArgs:Array<String>? = null, groupBy:String? = null, having:String? = null,
+              orderBy:String? = null, limit:String? = null):Cursor
+
     fun insertWithOnConflict(table: String, nullColumnHack:String?, contentValues: ContentValues, conflictAlgorithm: Int): Long
+    fun updateWithOnConflict(table: String, values:ContentValues, whereClause:String?, whereArgs:Array<String>?, conflictAlgorithm:Int): Int
+
+    fun delete(table:String, whereClause:String? = null, whereArgs:Array<String>? = null):Int
 
     fun execSQL(sql:String):Unit
     fun execSQL(sql:String, bindArgs:Array<Any?>):Unit
 
-    fun query(distinct:Boolean=false, table:String, columns:Array<String>? = null, selection:String? = null,
-                 selectionArgs:Array<String>? = null, groupBy:String? = null, having:String? = null,
-              orderBy:String? = null, limit:String? = null):Cursor
+
 
     fun rawQuery(sql:String, selectionArgs:Array<String>? = null):Cursor
     fun rawQueryWithFactory(cursorFactory: CursorFactory, sql:String, selectionArgs:Array<String?>?, editTable: String?): Cursor
@@ -160,5 +170,4 @@ expect class SQLiteDatabase{
     fun isDatabaseIntegrityOk():Boolean
     fun close():Unit
 
-    fun compileStatement(sql:String): SQLiteStatement
 }

@@ -34,7 +34,6 @@ actual class SQLiteDatabase(val db:AndroidDatabaseSqliteSQLiteDatabase){
     }
 
     actual fun inTransaction(): Boolean = db.inTransaction()
-    actual fun isDbLockedByCurrentThread(): Boolean = db.isDbLockedByCurrentThread()
     actual fun yieldIfContendedSafely(): Boolean = db.yieldIfContendedSafely()
     actual fun yieldIfContendedSafely(sleepAfterYieldDelay: Long): Boolean = db.yieldIfContendedSafelyWithLong(sleepAfterYieldDelay)
     actual fun getVersion():Int = db.getVersion()
@@ -52,13 +51,22 @@ actual class SQLiteDatabase(val db:AndroidDatabaseSqliteSQLiteDatabase){
         return db.insertWithOnConflictWithNSString(table, nullColumnHack, contentValues.platformValues(), conflictAlgorithm)
     }
 
+    actual fun updateWithOnConflict(table: String, values: ContentValues,
+                                    whereClause:String?, whereArgs:Array<String>?, conflictAlgorithm:Int):Int
+    {
+        return db.updateWithOnConflictWithNSString(table, values.platformValues(), whereClause, stringArrayAsIos(whereArgs), conflictAlgorithm)
+    }
+
+    actual fun delete(table:String, whereClause:String?, whereArgs:Array<String>?):Int{
+        return db.delete__WithNSString(table, whereClause, stringArrayAsIos(whereArgs))
+    }
+
     actual fun execSQL(sql:String):Unit{
         db.execSQLWithNSString(sql)
     }
 
     actual fun execSQL(sql:String, bindArgs:Array<Any?>):Unit{
-//        db.execSQLWithNSString(sql, )
-        TODO()
+        db.execSQLWithNSString(sql, anyArrayToIosObjectArray(bindArgs))
     }
 
     actual fun query(distinct:Boolean, table:String, columns:Array<String>?, selection:String?,
