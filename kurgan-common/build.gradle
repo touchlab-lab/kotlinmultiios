@@ -10,10 +10,13 @@ buildscript {
     }
 }
 
+apply plugin: 'maven-publish'
 apply plugin: 'kotlin-platform-common'
 
 group = 'co.touchlab.kurgan'
 //ext.artifactId = 'common'
+
+version = "0.1"
 
 repositories {
     mavenCentral()
@@ -22,3 +25,5 @@ repositories {
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-common:$kotlin_version"
 }
+
+apply from: "$dopplSharedScriptHome/kotlinpublish.gradle"
