@@ -1,0 +1,45 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven { url "https://dl.bintray.com/jetbrains/kotlin-native-dependencies" }
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin:${project.property('konan.plugin.version')}"
+    }
+}
+
+apply plugin: 'konan'
+
+konan.targets = ['iphone', 'iphone_sim']
+
+def j2objcRuntime = System.getenv('J2OBJC_RUNTIME')
+
+konanArtifacts {
+    framework('KotlinArithmeticParser') {
+        target('iphone') {
+            libraries {
+                klib 'kurgan'
+                klib 'objcsrc'
+
+                useRepo '../../kurgan-ios/build/konan/libs/ios_arm64'
+            }
+        }
+
+        target('iphone_sim') {
+            libraries {
+                klib 'kurgan'
+                klib 'objcsrc'
+
+                useRepo '../../kurgan-ios/build/konan/libs/ios_x64'
+            }
+        }
+
+        linkerOpts "-L${j2objcRuntime}/lib", "-L../../kurgan-ios/dbarch/Build/Products/Debug-universal"
+        enableMultiplatform true
+    }
+}
+
+dependencies {
+    expectedBy project(':sample/common')
+}

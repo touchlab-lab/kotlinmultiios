@@ -1,3 +1,0 @@
-headers = dbarch/mainDependencyOut.h dbarch/mainSourceOut.h java/util/Locale.h java/io/Closeable.h java/lang/Long.h java/lang/System.h java/lang/Integer.h java/lang/Short.h java/lang/Boolean.h java/lang/Byte.h java/lang/Float.h java/lang/Double.h java/util/Set.h java/util/List.h java/io/File.h IOSPrimitiveArray.h IOSClass.h
-language = Objective-C
-linkerOpts = -ljre_emul -lz -lsqlite3 -liconv -ldbarch -ObjC -framework Foundation -framework UIKit -framework Security
