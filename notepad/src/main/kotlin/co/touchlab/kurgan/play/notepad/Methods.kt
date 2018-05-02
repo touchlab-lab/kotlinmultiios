@@ -8,8 +8,16 @@ import co.touchlab.kurgan.util.currentTimeMillis
 import kotlin.coroutines.experimental.*
 import kotlin.coroutines.experimental.intrinsics.*
 
+data class HelperHolder(val dbOpenHelper : SqlDelightDatabaseHelper)
+
 class Methods{
     companion object {
+
+
+        init {
+
+        }
+
         fun testInserts(){
             val callback = object : PlatformSQLiteOpenHelperCallback(4){
                 override fun onCreate(db: SQLiteDatabase) {
@@ -26,42 +34,19 @@ class Methods{
                 }
             }
 
-            val dbOpenHelper = SqlDelightDatabaseHelper(createOpenHelper("binkyfarts", callback, null))
-            var queryWrapper = QueryWrapper(dbOpenHelper)
+            val helperHolder = createHolder(SqlDelightDatabaseHelper(createOpenHelper("binkyiscool", callback, null)))
+            runOnBackground(InsertValues(helperHolder,15000))
+            runOnBackground(InsertValues(helperHolder,15000))
+            runOnBackground(InsertValues(helperHolder, 15000))
+            runOnBackground(SelectValues(helperHolder, 50))
+        }
+
+        fun insertValues(holder:HelperHolder, insertCount: Int) {
+            val queryWrapper = QueryWrapper(holder.dbOpenHelper)
 
             val noteQueries = queryWrapper.noteQueries
 
-            runOnBackground(object : Runner{
-                override fun run() {
-                    for(i in 0 until 3) {
-                        insertValues(noteQueries)
-                        println("Inserted $i")
-                    }
-                    val alls = selectValues(noteQueries)
-
-                    for(row in alls){
-                        println("id: ${row.id}/title: ${row.title}/note: ${row.note}")
-                    }
-                    /*runOnMain(object : Runner{
-                        override fun run() {
-                            for(row in alls){
-                                println("id: ${row.id}/title: ${row.title}/note: ${row.note}")
-                            }
-                        }
-                    })*/
-                }
-            })
-
-
-
-        }
-
-        fun selectValues(noteQueries: NoteQueries) =
-                noteQueries.selectAll(20).executeAsList()
-
-        fun insertValues(noteQueries: NoteQueries) {
             println("Total Count: ${noteQueries.count().executeAsOne()}")
-            val insertCount = 15000
 
             val now = currentTimeMillis()
 
@@ -73,15 +58,30 @@ class Methods{
                 }
             }
         }
+
+        fun selectValues(holder:HelperHolder, selectCount: Long) {
+            val queryWrapper = QueryWrapper(holder.dbOpenHelper)
+
+            val noteQueries = queryWrapper.noteQueries
+
+            val alls = noteQueries.selectAll(selectCount).executeAsList()
+            for(row in alls){
+                println("id: ${row.id}/title: ${row.title}/note: ${row.note}")
+            }
+        }
     }
 }
 
+expect fun createHolder(db: SqlDelightDatabaseHelper):HelperHolder
+
 expect fun memzy(body: () -> Unit)
 
-expect fun initBadThreading()
-expect fun runOnBackground(r:Runner)
+expect fun runOnBackground(workerData: WorkerData)
 //expect fun runOnMain(r:Runner)
 
-interface Runner{
-    fun run()
-}
+
+interface WorkerData
+
+data class InsertValues(val holder:HelperHolder, val count:Int):WorkerData
+data class SelectValues(val holder:HelperHolder, val count:Long):WorkerData
+data class WorkerResult(val count:Int)

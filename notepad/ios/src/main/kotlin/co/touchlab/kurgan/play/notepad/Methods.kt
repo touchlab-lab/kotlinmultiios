@@ -3,6 +3,7 @@ package co.touchlab.kurgan.play.notepad
 import kotlinx.cinterop.*
 import objcsrc.*
 import konan.worker.*
+import co.touchlab.kurgan.architecture.database.sqldelight.SqlDelightDatabaseHelper
 
 actual fun memzy(body: () -> Unit){
     memScoped {
@@ -12,30 +13,31 @@ actual fun memzy(body: () -> Unit){
     }
 }
 
-private var executorService :JavaUtilConcurrentExecutorServiceProtocol? = null// = JavaUtilConcurrentExecutors.newSingleThreadExecutor()!!
-private var mainHandler :AndroidOsHandler? = null //= AndroidOsHandler(AndroidOsLooper.getMainLooper())!!
+private var myWorker = startWorker()
 
-actual fun initBadThreading(){
-    executorService = JavaUtilConcurrentExecutors.newSingleThreadExecutor()!!
-    mainHandler = AndroidOsHandler(AndroidOsLooper.getMainLooper())!!
-    println("init executorService $executorService")
+
+actual fun runOnBackground(workerData: WorkerData){
+    when(workerData){
+        is InsertValues -> {
+//            Methods.insertValues(holder, workerData.count)
+            println("InsertValues calling")
+            myWorker.schedule(TransferMode.CHECKED,{InsertValues(workerData.holder, workerData.count)}){ input ->
+                println("InsertValues inside")
+                Methods.insertValues(input.holder, input.count)
+                WorkerResult(1234)
+            }
+        }
+        is SelectValues ->  {
+//            Methods.selectValues(holder, workerData.count)
+            println("SelectValues calling")
+            myWorker.schedule(TransferMode.CHECKED,{SelectValues(workerData.holder, workerData.count)}){ input ->
+                println("SelectValues inside")
+                Methods.selectValues(input.holder, input.count)
+                WorkerResult(1234)
+            }
+        }
+        else -> throw IllegalArgumentException("Don't know type of $workerData")
+    }
 }
 
-actual fun runOnBackground(r:Runner){
-    println("executorService $executorService, r $r")
-    r.run()
-    /*executorService!!.executeWithJavaLangRunnable(object : ComKgalliganJustdbextractSharedIosRunnable(){
-        override fun runReal(){
-            r.run()
-        }
-    })*/
-}
-
-/*
-actual fun runOnMain(r:Runner){
-    mainHandler!!.postWithJavaLangRunnable (object : ComKgalliganJustdbextractSharedIosRunnable(){
-        override fun runReal(){
-            r.run()
-        }
-    })
-}*/
+actual fun createHolder(db: SqlDelightDatabaseHelper)= HelperHolder(db).freeze()

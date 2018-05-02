@@ -27,9 +27,6 @@ class PlayRuntime(){
 
         fun helloStart(){
             DopplRuntime.start()
-            println("Before initBadThreading")
-            initBadThreading()
-            println("After initBadThreading")
             initApplicationDb(context)
 
             Methods.testInserts()
