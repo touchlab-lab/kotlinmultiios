@@ -1,54 +1,124 @@
-# Calculator sample
+# SQLite & SQLDelight Sample
 
-This example shows how to use Kotlin common module (located in [common/](common/)) in different environments.
-Currently for
-* Android (see [android](android/))
-* iOS (see [ios/calculator](ios/calculator/))
-* plain JVM (cli) (see [jvm](jvm/))
+This example shows a first pass on creating a Kotlin/Native SQLite interface and common interface that is a stand in for Android's
+SQLite stack. It also includes SQLDelight's Kotlin Common source gen which allows multiplatform database development.
 
-## Common
+## Notes
 
-Common Kotlin module contains arithmetic expressions parser.
+This is super, super early. The app does nothing except insert and query a bunch of data. Some of the architecture needs a rethink 
+due to the threading model of Kotlin/Native. All the rest of the notes in blog post/video.
 
-## Android App
-The common module may be used in an Android application.
+## Building
 
-To build and run the Android sample do the following:
+Right now (11:19am Friday) the Android app compiles but won't actually do anything. May fix but that's not the interesting part of
+the demo, and I promised to publish this by today, so priorities.
 
-1.  Open the project in Android Studio 3.1
-2.  Create a new Android App configuration. Choose module `android`.
-3.  Now build and run the configuration created.
+1: Clone Kotlin/Native: https://github.com/JetBrains/kotlin-native.
 
-## iOS
-The iOS project compiles Kotlin module to a framework (see [ios](ios/)). The framework can be easily included in an existing iOS project (e.g. written in Swift or Objective-C)
-
-To build and run the iOS sample do the following:
-
-1.  Open `ios/calculator.xcodeproj` with Xcode.
-2.  Open the project's target through project navigator, go to tab 'General'.
-    In 'Identity' section change the bundle ID to the unique string in
-    reverse-DNS format. Then select the team in 'Signing' section.
-    
-    See the
-    [Xcode documentation](https://developer.apple.com/library/content/documentation/IDEs/Conceptual/AppDistributionGuide/ConfiguringYourApp/ConfiguringYourApp.html#//apple_ref/doc/uid/TP40012582-CH28-SW2)
-    for more info.
-3.  Now build and run the application with Xcode.
-
-The iOS application is written in Swift. It uses Kotlin module as a library.
-Kotlin module is built into Objective-C framework by invoking Gradle
-from custom "Run Script" build phase, and this framework is imported into
-the Xcode project.
-
-## Plain JVM
-The common module can also be used in JVM application built by Kotlin/JVM compiler with Gradle.
-To build and run it, go to [jvm](jvm/) directory and use
+2: Modify some source in Kotlin/Native. I've filed [an issue](https://github.com/JetBrains/kotlin-native/issues/1539), 
+but for now, you need to remove the check code. Open the file:
 ```
-../gradlew run
+backend.native/compiler/ir/backend.native/src/org/jetbrains/kotlin/backend/konan/lower/InteropLowering.kt
 ```
 
-To build the distribution:
+Comment out a block starting at line 521 (example below starts at 519 for context).
+
+```kotlin
+            val initMethod = expression.descriptor.getObjCInitMethod()!!
+
+            /*if (!expression.descriptor.objCConstructorIsDesignated()) {
+                context.reportCompilationError(
+                        "Unable to call non-designated initializer as super constructor",
+                        currentFile,
+                        expression
+                )
+            }*/
+
+            val initMethodInfo = initMethod.getExternalObjCMethodInfo()!!
 ```
-../gradlew distZip
+
+3: Run the Kotlin/Native build steps:
+```bash
+./gradlew dependencies:update
+./gradlew bundle
 ```
-(the result will be available as
-`jvm/build/distributions/KotlinCalculator.zip`)
+
+3a: Optional, but poke around some of the samples and make sure they work. The 'calculator' samples specifically. This is 
+built on that.
+
+4: Add that dir to your environment variables (I put in ~/.bash_profile)
+```
+export KOTLIN_NATIVE_DIR=[Your path]
+```
+
+5: Download [J2objc 2.1.1](https://github.com/google/j2objc/releases/tag/2.1.1). Unzip to a local path. If you're not the
+self sabotaging type, I'd suggest a path with no spaces.
+
+6: Add that to environment variables
+```
+export J2OBJC_RUNTIME=[unzip path]
+```
+
+### Sanity Check!
+
+Here's my ~/.bash_profile
+```
+export J2OBJC_RUNTIME=/Users/kgalligan/bin/j2objc-2.1.1
+export KOTLIN_NATIVE_DIR=/Users/kgalligan/temp2/kotlin-native
+```
+
+I didn't mention it above, but you've got Xcode installed and you've built a few things with it. Especially something 
+that will force the command line tools to be installed. If you haven't done options step 3a above, I'd say do it. Really 
+shouldn't be optional.
+
+### More Steps
+
+7: Open Intellij and open the sample project in it.
+
+8: Manually run the task to generate the SQLDelight interfaces: generateSqlDelightInterface. I've been running that from the Gradle UI
+":notepad>Tasks>sqldelight>generateSqlDelightInterface". Verify that those are built by looking in notepad/build/sqldelight. If not, 
+you're probably not getting to the next steps.
+
+9: Build the ios app specifically.
+
+```bash
+./gradlew :notepad:ios:build
+```
+
+10: Open the Xcode project. It's in 'notepad/ios'. Open 'calculator.xcodeproj' (For the non-Xcode crowd, it's a folder, but sort of not really)
+
+11: Select a simulator profile, and run. It'll take *a while*. When it's done, you should see the following.
+
+![simulator screen](simulatorscreen.png)
+
+There are 2 buttons and a label. The "Insert Stuff" button will run the shared code found in: 
+
+```
+notepad/src/main/kotlin/co/touchlab/kurgan/play/notepad/Methods.kt
+```
+
+This creates the database, then schedules 3 inserts of 15000 rows each, followed by a select of 10 rows. All is written to
+the console output, which should look like this.
+
+![console out](consoleout.png)
+
+What does "Memory" button do? Well, you'll need to learn how Kotlin/Native handles memory to fully understand, but it 
+runs the insert loops and only cleans up memory at the end of it, as opposed to the first button with cleans on each loop.
+If you're interested, open the project in Instruments and open in "Leaks" profile. The first button will be flat. Second will 
+have a sawtooth. Not super important for the demo, but interesting.
+
+## FAQ
+
+Q: Can I try this in my app?
+A: Sure, but don't.
+
+Q: Where's the SQLite source?
+A: Well, I've learned quite a bit about Kotlin/Native architecture and threads, and there's some refactoring that's needed anyway. For example, 
+you can get a blob from results, but can't pass one to a query. I'll have another release in a few weeks with other bits. The actual SQLite 
+code is from Doppl, so you can see that [here](https://doppllib.github.io/).
+
+Q: The generated SQLDelight isn't compiling!
+A: SQLdelight with Kotlin is being heavily developed, and to get the Kotlin/Native build, I need source, so the runtime is copy/pasted, but
+the generator code is looking at a SNAPSHOT. If that's been updated, it might break (it did for me 2 hours before my talk). Ping me on 
+twitter at @kpgalligan if this is happening and I'll republish.
+

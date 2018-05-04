@@ -12,13 +12,7 @@ data class HelperHolder(val dbOpenHelper : SqlDelightDatabaseHelper)
 
 class Methods{
     companion object {
-
-
-        init {
-
-        }
-
-        fun testInserts(){
+        fun testInserts(mems:Boolean){
             val callback = object : PlatformSQLiteOpenHelperCallback(4){
                 override fun onCreate(db: SQLiteDatabase) {
                     QueryWrapper.onCreate(QueryWrapper.create(db).getConnection())
@@ -35,39 +29,10 @@ class Methods{
             }
 
             val helperHolder = createHolder(SqlDelightDatabaseHelper(createOpenHelper("binkyiscool", callback, null)))
-            runOnBackground(InsertValues(helperHolder,15000))
-            runOnBackground(InsertValues(helperHolder,15000))
-            runOnBackground(InsertValues(helperHolder, 15000))
-            runOnBackground(SelectValues(helperHolder, 50))
-        }
-
-        fun insertValues(holder:HelperHolder, insertCount: Int) {
-            val queryWrapper = QueryWrapper(holder.dbOpenHelper)
-
-            val noteQueries = queryWrapper.noteQueries
-
-            println("Total Count: ${noteQueries.count().executeAsOne()}")
-
-            val now = currentTimeMillis()
-
-            noteQueries.transaction {
-                for (i in 0 until insertCount) {
-                    memzy {
-                        noteQueries.insertNote("asdf", "qwert 🥃👀", now, now, null)
-                    }
-                }
-            }
-        }
-
-        fun selectValues(holder:HelperHolder, selectCount: Long) {
-            val queryWrapper = QueryWrapper(holder.dbOpenHelper)
-
-            val noteQueries = queryWrapper.noteQueries
-
-            val alls = noteQueries.selectAll(selectCount).executeAsList()
-            for(row in alls){
-                println("id: ${row.id}/title: ${row.title}/note: ${row.note}")
-            }
+            runOnBackground(InsertValues(helperHolder,15000, mems))
+            runOnBackground(InsertValues(helperHolder,15000, mems))
+            runOnBackground(InsertValues(helperHolder, 15000, mems))
+            runOnBackground(SelectValues(helperHolder, 10))
         }
     }
 }
@@ -80,8 +45,47 @@ expect fun runOnBackground(workerData: WorkerData)
 //expect fun runOnMain(r:Runner)
 
 
-interface WorkerData
+interface WorkerData{
+    fun runme()
+}
 
-data class InsertValues(val holder:HelperHolder, val count:Int):WorkerData
-data class SelectValues(val holder:HelperHolder, val count:Long):WorkerData
+data class InsertValues(val holder:HelperHolder, val count:Int, val mems:Boolean):WorkerData{
+    override fun runme() {
+        val queryWrapper = QueryWrapper(holder.dbOpenHelper)
+
+        val noteQueries = queryWrapper.noteQueries
+
+        println("Total Count: ${noteQueries.count().executeAsOne()}")
+
+        val now = currentTimeMillis()
+
+        noteQueries.transaction {
+            if(mems) {
+                for (i in 0 until count) {
+                    memzy {
+                        noteQueries.insertNote("asdf", "qwert 🥃👀", now, now, null)
+                    }
+                }
+            }else{
+                memzy {
+                    for (i in 0 until count) {
+                        noteQueries.insertNote("asdf", "qwert 🥃👀", now, now, null)
+                    }
+                }
+            }
+        }
+    }
+}
+data class SelectValues(val holder:HelperHolder, val count:Long):WorkerData{
+    override fun runme() {
+        val queryWrapper = QueryWrapper(holder.dbOpenHelper)
+
+        val noteQueries = queryWrapper.noteQueries
+
+        val alls = noteQueries.selectAll(count).executeAsList()
+        for(row in alls){
+            println("id: ${row.id}/title: ${row.title}/note: ${row.note}")
+        }
+    }
+}
 data class WorkerResult(val count:Int)

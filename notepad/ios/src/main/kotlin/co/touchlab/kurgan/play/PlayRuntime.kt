@@ -11,25 +11,22 @@ import com.squareup.sqldelight.db.SqlDatabase
 import kotlinx.cinterop.*
 import objcsrc.*
 
-fun helloStartGlobal(){
-    PlayRuntime.helloStart()
-
-}
-
-fun helloInsertRow(){
-
-}
-
 class PlayRuntime(){
 
-    companion object {
+    init {
         val context = AndroidContentIOSContext()
+        DopplRuntime.start()
+        initApplicationDb(context)
+    }
 
-        fun helloStart(){
-            DopplRuntime.start()
-            initApplicationDb(context)
+    fun helloStart(mems:Boolean){
+        Methods.testInserts(mems)
+    }
 
-            Methods.testInserts()
+    companion object {
+        fun hi(mems: Boolean){
+            val pr = PlayRuntime()
+            pr.helloStart(mems)
         }
     }
 }

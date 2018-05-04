@@ -22,3 +22,4 @@ sqldelight {
 
 //compileKotlinCommon.dependsOn("generateSqlDelightInterface")
 //tasks.findByName("compileKotlinCommon")?.dependsOn(tasks.findByName("generateSqlDelightInterface"))
+//tasks.getByName("build").dependsOn("generateSqlDelightInterface")

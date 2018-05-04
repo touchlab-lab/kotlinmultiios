@@ -13,26 +13,25 @@ actual fun memzy(body: () -> Unit){
     }
 }
 
-private var myWorker = startWorker()
+private var myWorker :Worker? = null
 
 
 actual fun runOnBackground(workerData: WorkerData){
+    if(myWorker == null) {
+        myWorker = startWorker()
+    }
+
     when(workerData){
+
         is InsertValues -> {
-//            Methods.insertValues(holder, workerData.count)
-            println("InsertValues calling")
-            myWorker.schedule(TransferMode.CHECKED,{InsertValues(workerData.holder, workerData.count)}){ input ->
-                println("InsertValues inside")
-                Methods.insertValues(input.holder, input.count)
+            myWorker!!.schedule(TransferMode.CHECKED,{InsertValues(workerData.holder, workerData.count, workerData.mems)}){ input ->
+                input.runme()
                 WorkerResult(1234)
             }
         }
         is SelectValues ->  {
-//            Methods.selectValues(holder, workerData.count)
-            println("SelectValues calling")
-            myWorker.schedule(TransferMode.CHECKED,{SelectValues(workerData.holder, workerData.count)}){ input ->
-                println("SelectValues inside")
-                Methods.selectValues(input.holder, input.count)
+            myWorker!!.schedule(TransferMode.CHECKED,{SelectValues(workerData.holder, workerData.count)}){ input ->
+                input.runme()
                 WorkerResult(1234)
             }
         }

@@ -11,7 +11,7 @@ konanArtifacts {
                 klib 'kurgan'
                 klib 'objcsrc'
 
-                useRepo '../../../calculator/kurgan-ios/build/konan/libs/ios_arm64'
+                useRepo 'klibrepo/ios_arm64'
             }
         }
 
@@ -20,11 +20,11 @@ konanArtifacts {
                 klib 'kurgan'
                 klib 'objcsrc'
 
-                useRepo '../../../calculator/kurgan-ios/build/konan/libs/ios_x64'
+                useRepo 'klibrepo/ios_x64'
             }
         }
 
-        linkerOpts "-L${j2objcRuntime}/lib", "-L../../../calculator/kurgan-ios/dbarch/Build/Products/Debug-universal"
+        linkerOpts "-L${j2objcRuntime}/lib", "-Lioslibs"
         enableMultiplatform true
     }
 }
@@ -32,3 +32,4 @@ konanArtifacts {
 dependencies {
     expectedBy project(':notepad')
 }
+
