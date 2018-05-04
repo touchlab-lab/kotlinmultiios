@@ -6,7 +6,7 @@ SQLite stack. It also includes SQLDelight's Kotlin Common source gen which allow
 ## Notes
 
 This is super, super early. The app does nothing except insert and query a bunch of data. Some of the architecture needs a rethink 
-due to the threading model of Kotlin/Native. All the rest of the notes in blog post/video.
+due to the threading model of Kotlin/Native. All the rest of the notes in [blog post](https://medium.com/@kpgalligan/sqlite-sqldelight-%EF%B8%8F-kotlin-multiplatform-f24fe7cba338)/video.
 
 ## Building
 
@@ -120,5 +120,5 @@ code is from Doppl, so you can see that [here](https://doppllib.github.io/).
 Q: The generated SQLDelight isn't compiling!
 A: SQLdelight with Kotlin is being heavily developed, and to get the Kotlin/Native build, I need source, so the runtime is copy/pasted, but
 the generator code is looking at a SNAPSHOT. If that's been updated, it might break (it did for me 2 hours before my talk). Ping me on 
-twitter at @kpgalligan if this is happening and I'll republish.
+twitter at [@kpgalligan](https://twitter.com/kpgalligan) if this is happening and I'll republish.
 
