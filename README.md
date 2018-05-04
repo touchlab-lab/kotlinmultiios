@@ -73,7 +73,7 @@ shouldn't be optional.
 
 ### More Steps
 
-7: Open Intellij and open the sample project in it.
+7: Open Intellij and open this sample project in it. **Intellij**, not Android Studio. Might be OK, but haven't tried.
 
 8: Manually run the task to generate the SQLDelight interfaces: generateSqlDelightInterface. I've been running that from the Gradle UI
 ":notepad>Tasks>sqldelight>generateSqlDelightInterface". Verify that those are built by looking in notepad/build/sqldelight. If not, 
