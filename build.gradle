@@ -52,7 +52,8 @@ buildscript {
         maven { url "https://kotlin.bintray.com/kotlinx" }
         gradlePluginPortal()
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
-        maven { url j2objcMavenDeploy }
+        maven { url 'https://dl.bintray.com/doppllib/j2objc' }
+//        maven { url j2objcMavenDeploy }
     }
 
     dependencies {
@@ -69,6 +70,7 @@ allprojects {
         google()
         maven { url "https://kotlin.bintray.com/kotlinx" }
         maven { url 'https://oss.sonatype.org/content/repositories/snapshots/' }
+        maven { url 'https://dl.bintray.com/doppllib/j2objc' }
 //        maven { url j2objcMavenDeploy }
     }
 }
